@@ -20,7 +20,7 @@ function Header() {
                     <div className="search flex flex-row  align-middle content-center p-5 w-[90%] lg:w-full mx-[5%] lg:mx-0  mt-4">
                        <div className="type relative w-[38%] ">
                          <select className="select w-full">
-                          <option value="">All type</option>
+                          <option defaultValue=''>All type</option>
                           <option value="">Flat</option>
                           <option value="">2 Bed Room</option>
                           <option value="">Dulex</option>
