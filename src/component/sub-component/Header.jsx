@@ -1,9 +1,5 @@
-import Nav from "./nav"
+import Nav from './Nav'
 import map from '../../assets/Rectangle .png'
-
-
-
-
 function Header() {
   return (
     <div className='relative bg-hero w-full max-h-[742px] h-auto lg:h-screen bg-cover z-50 '>

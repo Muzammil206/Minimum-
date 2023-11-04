@@ -1,5 +1,6 @@
 import Header from "./sub-component/Header"
-import Cost from "./sub-component/cost"
+// import Cost from "./sub-component/cost"
+import Cost from "./sub-component/Cost"
 import Properties from "./sub-component/Properties"
 import Show from "./sub-component/Show"
 import Form from "./sub-component/Form"

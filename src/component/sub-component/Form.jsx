@@ -1,6 +1,54 @@
-
+import { useState } from "react"
+import axios from "axios"
 
 function Form() {
+  const [name, setName] = useState('')
+  const [address, setAddress] = useState('')
+  const [description, setDescription] = useState('')
+  const [bedRoom, setBedRoom] = useState('')
+  const [garage, setGarage] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
+  const [price, setPrice] = useState()
+  const apikey = import.meta.env.VITE_REACT_AIRTABLE_TOKEN
+  const baseID = import.meta.env.VITE_REACT_BASE_ID
+  const tableId = import.meta.env.VITE_REACT_TABLE_ID
+  const uploadPreset = import.meta.env.VITE_REACT_UPLOAD_PRESET
+  const cloudName = import.meta.env.VITE_CLOUD_NAME 
+  const Data = {
+    fields: {
+      Name: name,
+      Address: address,
+      Description: description,
+      Image: imageUrl,
+      BedRoom: bedRoom,
+      Garage: garage,
+      Price: price
+    }
+  }
+  const headers = {
+    Authorization: `Bearer ${apikey}`,
+  };
+  const uploadImage = (images) => {
+    const data = new FormData();
+    data.append("file", images);
+    data.append("upload_preset", `${uploadPreset}`);
+    data.append("cloud_name", `${cloudName}`);
+    axios.post(`https://api.cloudinary.com/v1_1/docwl6cln/image/upload`, data)
+      .then((data) => {
+        setImageUrl(data.data.url)
+      })
+      .catch((err) => console.log(err));
+  }
+  const [response, setReponse] = useState('')
+  const submitProperty = () => {
+      axios.post(`https://api.airtable.com/v0/${baseID}/${tableId}`, Data, {headers}) 
+      .then((response) => {
+        setReponse('property has been uploaded')
+      })
+      .catch((error) => {
+        setReponse('Errro')
+      })
+  }
   return (
     <div>
         
@@ -27,7 +75,7 @@ function Form() {
                Name
             </label>
 
-            <input id="" type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500  required: 0 " placeholder=" Name"/>
+            <input id="" type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500  required: 0 " placeholder=" Name" value={name} onChange={(event) => setName(event.target.value)}/>
           </div>
 
           <div className="space-y-2">
@@ -35,7 +83,28 @@ function Form() {
               Address
             </label>
 
-            <input id="af-submit-project-url" type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500  required: 0 " placeholder="Enter your Address"/>
+            <input id="af-submit-project-url" type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500  required: 0 " placeholder="Enter your Address" value={address} onChange={(event) => setAddress(event.target.value)}/>
+          </div>
+          <div className="space-y-2">
+            <label for="af-submit-project-url" className="inline-block text-sm font-medium text-gray-800 mt-2.5 dark:text-gray-200">
+              Garage
+            </label>
+
+            <input id="af-submit-project-url" type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500  required: 0 " placeholder="Garage Number" value={garage} onChange={(event) => setGarage(event.target.value)}/>
+          </div>
+          <div className="space-y-2">
+            <label for="af-submit-project-url" className="inline-block text-sm font-medium text-gray-800 mt-2.5 dark:text-gray-200">
+              Bedroom 
+            </label>
+
+            <input id="af-submit-project-url" type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500  required: 0 " placeholder="Bedroom Number" value={bedRoom} onChange={(event) => setBedRoom(event.target.value)}/>
+          </div>
+          <div className="space-y-2">
+            <label for="af-submit-project-url" className="inline-block text-sm font-medium text-gray-800 mt-2.5 dark:text-gray-200">
+              Price
+            </label>
+
+            <input id="af-submit-project-url" type="text" className="py-2 px-3 pr-11 block w-full border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500  required: 0 " placeholder="Price" value={price} onChange={(event) => setPrice(event.target.value)}/>
           </div>
           <div className="space-y-2">
             <label for="af-submit-app-category" className="inline-block text-sm font-medium text-gray-800 mt-2.5 dark:text-gray-200">
@@ -82,7 +151,7 @@ function Form() {
               Description
             </label>
 
-            <textarea id="af-submit-app-description" className="py-2 px-3 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500  0 " rows="6" placeholder="A detailed summary will better explain your products to the audiences. Our users will see this in your dedicated product page."></textarea>
+            <textarea id="af-submit-app-description" className="py-2 px-3 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500  0 " rows="6" placeholder="A detailed summary will better explain your products to the audiences. Our users will see this in your dedicated product page." value={description} onChange={(event) => setDescription(event.target.value)}></textarea>
           </div>
           
 
@@ -92,29 +161,33 @@ function Form() {
             </label>
 
             <label for="af-submit-app-upload-images" className="group p-4 sm:p-7 block cursor-pointer text-center border-2 border-dashed border-[#F4511E] rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 0">
-              <input id="af-submit-app-upload-images" name="af-submit-app-upload-images" type="file" className="sr-only"/>
-              <svg className="w-10 h-10 mx-auto text-gray-400 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2z"/>
-                <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/>
-              </svg>
-              <span className="mt-2 block text-sm text-gray-800 dark:text-gray-200">
-                Browse your device or <span className="group-hover:text-blue-700 text-blue-600">drag 'n drop'</span>
-              </span>
-              <span className="mt-1 block text-xs text-gray-500">
-                Maximum file size is 2 MB
-              </span>
+              {
+                imageUrl ? <img src={imageUrl} alt="uploaded image" style={{width: '200px', height: '200px'}}/> :             
+                <>
+                <input id="af-submit-app-upload-images" name="af-submit-app-upload-images" type="file" className="sr-only"  onChange={(event) => (event.target.files[0].size <= 10000000 ? uploadImage(event.target.files[0]) : alert('check image size'))}/>
+                <svg className="w-10 h-10 mx-auto text-gray-400 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2z"/>
+                  <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/>
+                </svg>
+                <span className="mt-2 block text-sm text-gray-800 dark:text-gray-200">
+                  Browse your device or <span className="group-hover:text-blue-700 text-blue-600">drag 'n drop'</span>
+                </span>
+                <span className="mt-1 block text-xs text-gray-500">
+                  Maximum file size is 10 MB
+                </span>
+                </>
+              }
             </label>
-          </div>
-
- 
-
-         
+          </div>        
         </div>
        
 
         <div className="button mt-4 justify-center flex">
-                    <button className="btn">Add New Property</button>
-                </div>
+          {
+            response ? response : 
+            <button className="btn" onClick={ (event) => (event.preventDefault(), submitProperty())}>Add New Property</button>
+          }                   
+        </div>
       </div>
     </div>
  
