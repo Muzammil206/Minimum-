@@ -1,5 +1,6 @@
 import { useState } from "react"
 import axios from "axios"
+import { api } from "../Reusable/Api"
 
 function Form() {
   const [name, setName] = useState('')
@@ -9,7 +10,6 @@ function Form() {
   const [garage, setGarage] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [price, setPrice] = useState()
-  const apikey = import.meta.env.VITE_REACT_AIRTABLE_TOKEN
   const baseID = import.meta.env.VITE_REACT_BASE_ID
   const tableId = import.meta.env.VITE_REACT_TABLE_ID
   const uploadPreset = import.meta.env.VITE_REACT_UPLOAD_PRESET
@@ -25,9 +25,6 @@ function Form() {
       Price: price
     }
   }
-  const headers = {
-    Authorization: `Bearer ${apikey}`,
-  };
   const uploadImage = (images) => {
     const data = new FormData();
     data.append("file", images);
@@ -41,7 +38,7 @@ function Form() {
   }
   const [response, setReponse] = useState('')
   const submitProperty = () => {
-      axios.post(`https://api.airtable.com/v0/${baseID}/${tableId}`, Data, {headers}) 
+      api.post(`${baseID}/${tableId}`, Data) 
       .then((response) => {
         setReponse('property has been uploaded')
       })
